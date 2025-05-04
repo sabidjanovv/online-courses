@@ -21,6 +21,7 @@ export class EnrollmentsService {
       .find()
       .populate('user_id', 'name email')
       .populate('course_id', 'name description price')
+      .sort({ createdAt: 'desc' })
       .lean();
   }
 
