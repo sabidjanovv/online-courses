@@ -31,7 +31,11 @@ export class UsersService {
   }
 
   async findAll(): Promise<User[]> {
-    return await this.userModel.find().select('-password').lean();
+    return await this.userModel
+      .find()
+      .select('-password')
+      .sort({ createdAt: "desc" })
+      .lean();
   }
 
   async findOne(id: string): Promise<User> {

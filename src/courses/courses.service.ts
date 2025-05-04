@@ -17,8 +17,9 @@ export class CoursesService {
   async findAll(): Promise<Course[]> {
     return this.courseModel
       .find()
-      .populate('category_id', 'name') 
-      .populate('teacher_id', 'name') 
+      .populate('category_id', 'name')
+      .populate('teacher_id', 'name')
+      .sort({ createdAt: 'desc' })
       .lean();
   }
 
