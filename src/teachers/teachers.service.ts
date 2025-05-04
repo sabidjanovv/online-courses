@@ -17,7 +17,7 @@ export class TeachersService {
   }
 
   async findAll(): Promise<Teacher[]> {
-    return this.teacherModel.find().lean();
+    return this.teacherModel.find().sort({ createdAt: 'desc' }).lean();
   }
 
   async findOne(id: string): Promise<Teacher> {

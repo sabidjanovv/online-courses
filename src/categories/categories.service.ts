@@ -17,7 +17,7 @@ export class CategoriesService {
   }
 
   async findAll(): Promise<Category[]> {
-    return await this.categoryModel.find().lean();
+    return await this.categoryModel.find().sort({ createdAt: 'desc' }).lean();
   }
 
   async findOne(id: string): Promise<Category> {
