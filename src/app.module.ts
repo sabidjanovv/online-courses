@@ -6,6 +6,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { TeachersModule } from './teachers/teachers.module';
 import { CoursesModule } from './courses/courses.module';
 import { EnrollmentsModule } from './enrollments/enrollments.module';
+import { ModulesModule } from './modules/modules.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: '.env' }),
@@ -15,6 +16,7 @@ import { EnrollmentsModule } from './enrollments/enrollments.module';
     TeachersModule,
     CoursesModule,
     EnrollmentsModule,
+    ModulesModule,
   ],
   controllers: [],
   providers: [],
