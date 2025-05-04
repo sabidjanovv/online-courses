@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { CategoriesModule } from './categories/categories.module';
 import { TeachersModule } from './teachers/teachers.module';
+import { CoursesModule } from './courses/courses.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: '.env' }),
@@ -11,6 +12,7 @@ import { TeachersModule } from './teachers/teachers.module';
     UsersModule,
     CategoriesModule,
     TeachersModule,
+    CoursesModule,
   ],
   controllers: [],
   providers: [],
