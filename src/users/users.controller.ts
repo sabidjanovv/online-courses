@@ -38,9 +38,7 @@ export class UsersController {
   @Get(':id')
   @ApiOperation({ summary: 'ID bo‘yicha foydalanuvchini olish' })
   async findOne(@Param('id') id: string) {
-    const user = await this.usersService.findOne(id);
-    if (!user) throw new NotFoundException('Foydalanuvchi topilmadi');
-    return user;
+    return await this.usersService.findOne(id);
   }
 
   @Patch(':id')
