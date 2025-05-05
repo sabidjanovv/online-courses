@@ -9,6 +9,7 @@ import { EnrollmentsModule } from './enrollments/enrollments.module';
 import { ModulesModule } from './modules/modules.module';
 import { LessonsModule } from './lessons/lessons.module';
 import { AssignmentsModule } from './assignments/assignments.module';
+import { SubmissionsModule } from './submissions/submissions.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: '.env' }),
@@ -21,6 +22,7 @@ import { AssignmentsModule } from './assignments/assignments.module';
     ModulesModule,
     LessonsModule,
     AssignmentsModule,
+    SubmissionsModule,
   ],
   controllers: [],
   providers: [],
