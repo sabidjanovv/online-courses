@@ -6,13 +6,13 @@ import {
   Patch,
   Param,
   Delete,
-  NotFoundException,
-  ParseUUIDPipe,
+  Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { Response } from 'express';
 
 @ApiTags('Users')
 @Controller('users')
@@ -39,6 +39,13 @@ export class UsersController {
   @ApiOperation({ summary: 'ID bo‘yicha foydalanuvchini olish' })
   async findOne(@Param('id') id: string) {
     return await this.usersService.findOne(id);
+  }
+
+  @Get('activate/:link')
+  @ApiOperation({ summary: 'Link orqali Userni faollashtirish' })
+  @ApiParam({ name: 'link', description: 'Aktivatsiya linki' })
+  activateUser(@Param('link') link: string, @Res() res: Response) {
+    return this.usersService.activateUser(link, res);
   }
 
   @Patch(':id')
