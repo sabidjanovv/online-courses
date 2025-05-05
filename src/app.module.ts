@@ -8,6 +8,7 @@ import { CoursesModule } from './courses/courses.module';
 import { EnrollmentsModule } from './enrollments/enrollments.module';
 import { ModulesModule } from './modules/modules.module';
 import { LessonsModule } from './lessons/lessons.module';
+import { AssignmentsModule } from './assignments/assignments.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: '.env' }),
@@ -19,6 +20,7 @@ import { LessonsModule } from './lessons/lessons.module';
     EnrollmentsModule,
     ModulesModule,
     LessonsModule,
+    AssignmentsModule,
   ],
   controllers: [],
   providers: [],

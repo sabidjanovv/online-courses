@@ -8,3 +8,8 @@ export enum CourseLevel {
   ORTA = "O'rta",
   OLIY = 'Oliy',
 }
+
+export enum TaskType {
+  MANUAL = 'manual',
+  AUTO = 'auto',
+}
