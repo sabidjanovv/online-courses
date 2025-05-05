@@ -1,0 +1,49 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
+import { CreateSubmissionDto } from './dto/create-submission.dto';
+import { UpdateSubmissionDto } from './dto/update-submission.dto';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { SubmissionService } from './submissions.service';
+
+@ApiTags('Submissions')
+@Controller('submissions')
+export class SubmissionController {
+  constructor(private readonly service: SubmissionService) {}
+
+  @Post()
+  @ApiOperation({ summary: 'Yangi topshiruv qo‘shish' })
+  create(@Body() dto: CreateSubmissionDto) {
+    return this.service.create(dto);
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Barcha topshiruvlarni olish' })
+  findAll() {
+    return this.service.findAll();
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'ID bo‘yicha topshiruvni olish' })
+  findOne(@Param('id') id: string) {
+    return this.service.findOne(id);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Topshiruvni yangilash' })
+  update(@Param('id') id: string, @Body() dto: UpdateSubmissionDto) {
+    return this.service.update(id, dto);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Topshiruvni o‘chirish' })
+  remove(@Param('id') id: string) {
+    return this.service.remove(id);
+  }
+}
