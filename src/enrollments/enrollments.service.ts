@@ -8,16 +8,16 @@ import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
 @Injectable()
 export class EnrollmentsService {
   constructor(
-    @InjectModel(Enrollment.name) private readonly model: Model<Enrollment>,
+    @InjectModel(Enrollment.name) private readonly enrollmentModel: Model<Enrollment>,
   ) {}
 
   async create(dto: CreateEnrollmentDto): Promise<Enrollment> {
-    const enrollment = new this.model(dto);
+    const enrollment = new this.enrollmentModel(dto);
     return enrollment.save();
   }
 
   async findAll(): Promise<Enrollment[]> {
-    return this.model
+    return this.enrollmentModel
       .find()
       .populate('user_id', 'name email')
       .populate('course_id', 'name description price')
@@ -26,7 +26,7 @@ export class EnrollmentsService {
   }
 
   async findOne(id: string): Promise<Enrollment> {
-    const enrollment = await this.model
+    const enrollment = await this.enrollmentModel
       .findById(id)
       .populate('user_id', 'name email')
       .populate('course_id', 'name description price')
@@ -36,14 +36,25 @@ export class EnrollmentsService {
   }
 
   async update(id: string, dto: UpdateEnrollmentDto): Promise<Enrollment> {
-    const updated = await this.model.findByIdAndUpdate(id, dto, { new: true });
+    const updated = await this.enrollmentModel.findByIdAndUpdate(id, dto, {
+      new: true,
+    });
     if (!updated) throw new NotFoundException('Yozilish topilmadi');
     return updated;
   }
 
   async remove(id: string): Promise<{ message: string }> {
-    const deleted = await this.model.findByIdAndDelete(id);
+    const deleted = await this.enrollmentModel.findByIdAndDelete(id);
     if (!deleted) throw new NotFoundException('Yozilish topilmadi');
     return { message: 'Yozilish muvaffaqiyatli o‘chirildi' };
+  }
+
+  async isEnrolled(user_id: string, course_id: string): Promise<boolean> {
+    
+    const enrollment = await this.enrollmentModel.findOne({
+      user_id,
+      course_id
+    });
+    return !!enrollment;
   }
 }

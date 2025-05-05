@@ -12,5 +12,6 @@ import { Enrollment, EnrollmentSchema } from './schemas/enrollment.schema';
   ],
   controllers: [EnrollmentsController],
   providers: [EnrollmentsService],
+  exports: [EnrollmentsService],
 })
 export class EnrollmentsModule {}

@@ -38,7 +38,7 @@ export class AuthService {
 
     const user = new this.userModel({
       ...createUserDto,
-      role
+      role,
     });
 
     const hashedPassword = await hash(createUserDto.password);
@@ -56,6 +56,7 @@ export class AuthService {
       id: user._id,
       name: user.name,
       email: user.email,
+      role,
     };
 
     try {
@@ -82,6 +83,7 @@ export class AuthService {
       name: user.name,
       isActive: user.isActive,
       email: user.email,
+      role: user.role,
     };
 
     const [access_token, refresh_token] = await Promise.all([
@@ -124,6 +126,7 @@ export class AuthService {
       access_token,
       id: user._id,
       email: user.email,
+      role: user.role,
     });
   }
 
@@ -164,6 +167,7 @@ export class AuthService {
           name: user.name,
           email: user.email,
           isActive: user.isActive,
+          role: user.role,
         },
       };
     } catch (error) {
