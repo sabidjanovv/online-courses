@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  NotFoundException,
 } from '@nestjs/common';
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
@@ -16,7 +18,13 @@ import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiNotFoundResponse,
+  ApiBearerAuth,
+  ApiParam,
+  ApiResponse,
 } from '@nestjs/swagger';
+import { AdminGuard } from '../common/guards/admin.guard';
+import { AuthGuard } from '@nestjs/passport';
+import { EnrollmentGuard } from '../common/guards/enrollment.guard';
 
 @ApiTags('Courses')
 @Controller('courses')
@@ -24,6 +32,8 @@ export class CoursesController {
   constructor(private readonly coursesService: CoursesService) {}
 
   @Post()
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Yangi kurs yaratish' })
   @ApiCreatedResponse({ description: 'Kurs muvaffaqiyatli yaratildi' })
   create(@Body() createCourseDto: CreateCourseDto) {
@@ -45,7 +55,33 @@ export class CoursesController {
     return this.coursesService.findOne(id);
   }
 
+  @Get(':courseId/modules')
+  @ApiBearerAuth()
+  @UseGuards(EnrollmentGuard)
+  @ApiOperation({ summary: 'Kursga tegishli modullar ro‘yxatini olish' })
+  @ApiParam({ name: 'courseId', type: 'string', description: 'Kurs ID' })
+  @ApiResponse({ status: 200, description: 'Modullar muvaffaqiyatli topildi.' })
+  @ApiResponse({ status: 404, description: 'Modullar topilmadi.' })
+  @ApiResponse({ status: 403, description: 'Foydalanuvchi kursga yozilmagan.' })
+  async getModules(@Param('courseId') courseId: string) {
+    return this.coursesService.getCourseModules(courseId);
+  }
+
+  @Get(':courseId/lessons')
+  @ApiBearerAuth()
+  @UseGuards(EnrollmentGuard)
+  @ApiOperation({ summary: 'Kursdagi barcha darslar ro‘yxatini olish' })
+  @ApiParam({ name: 'courseId', type: 'string', description: 'Kurs ID' })
+  @ApiResponse({ status: 200, description: 'Darslar muvaffaqiyatli topildi.' })
+  @ApiResponse({ status: 404, description: 'Darslar topilmadi.' })
+  @ApiResponse({ status: 403, description: 'Foydalanuvchi kursga yozilmagan.' })
+  async getLessons(@Param('courseId') courseId: string) {
+    return this.coursesService.getCourseLessons(courseId);
+  }
+
   @Patch(':id')
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Kursni yangilash' })
   @ApiOkResponse({ description: 'Kurs muvaffaqiyatli yangilandi' })
   @ApiNotFoundResponse({ description: 'Kurs topilmadi' })
@@ -54,6 +90,8 @@ export class CoursesController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Kursni o‘chirish' })
   @ApiOkResponse({ description: 'Kurs o‘chirildi' })
   @ApiNotFoundResponse({ description: 'Kurs topilmadi' })

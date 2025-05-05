@@ -6,11 +6,12 @@ import {
   Param,
   Delete,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { ModulesService } from './modules.service';
 import { CreateModuleDto } from './dto/create-module.dto';
 import { UpdateModuleDto } from './dto/update-module.dto';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiTags('Modules')
 @Controller('modules')
@@ -30,6 +31,8 @@ export class ModulesController {
   }
 
   @Get(':id')
+  @ApiBearerAuth()
+  @UseGuards()
   @ApiOperation({ summary: 'Modulni ID orqali olish' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
