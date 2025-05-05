@@ -11,6 +11,8 @@ import { LessonsModule } from './lessons/lessons.module';
 import { AssignmentsModule } from './assignments/assignments.module';
 import { SubmissionsModule } from './submissions/submissions.module';
 import { ResultsModule } from './results/results.module';
+import { AuthModule } from './auth/auth.module';
+import { MailModule } from './mail/mail.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: '.env' }),
@@ -25,6 +27,8 @@ import { ResultsModule } from './results/results.module';
     AssignmentsModule,
     SubmissionsModule,
     ResultsModule,
+    AuthModule,
+    MailModule
   ],
   controllers: [],
   providers: [],

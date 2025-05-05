@@ -1,6 +1,7 @@
 export enum UserRole {
   STUDENT = 'student',
   ADMIN = 'admin',
+  SUPERADMIN = 'superadmin',
 }
 
 export enum CourseLevel {
