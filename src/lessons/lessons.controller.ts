@@ -6,11 +6,13 @@ import {
   Param,
   Delete,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { LessonsService } from './lessons.service';
 import { CreateLessonDto } from './dto/create-lesson.dto';
 import { UpdateLessonDto } from './dto/update-lesson.dto';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { EnrollmentGuard } from '../common/guards/enrollment.guard';
 
 @ApiTags('Lessons')
 @Controller('lessons')
@@ -33,6 +35,18 @@ export class LessonsController {
   @ApiOperation({ summary: 'Darsni ID orqali olish' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
+  }
+
+  @Get('course/:courseId')
+  @ApiBearerAuth()
+  @UseGuards(EnrollmentGuard)
+  @ApiOperation({ summary: 'Kursdagi barcha darslar ro‘yxatini olish' })
+  @ApiParam({ name: 'courseId', type: 'string', description: 'Kurs ID' })
+  @ApiResponse({ status: 200, description: 'Darslar muvaffaqiyatli topildi.' })
+  @ApiResponse({ status: 404, description: 'Darslar topilmadi.' })
+  @ApiResponse({ status: 403, description: 'Foydalanuvchi kursga yozilmagan.' })
+  async getLessons(@Param('courseId') courseId: string) {
+    return this.service.getCourseLessons(courseId);
   }
 
   @Patch(':id')

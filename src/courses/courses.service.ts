@@ -68,35 +68,6 @@ export class CoursesService {
     return course;
   }
 
-  async getCourseModules(course_id: string): Promise<Modules[]> {
-    const modules = await this.modulesModel.find({ course_id });
-    if (!modules.length) {
-      throw new NotFoundException('Modullar topilmadi!');
-    }
-
-    return modules;
-  }
-
-  async getCourseLessons(course_id: string): Promise<Lesson[]> {
-    const lessons = await this.lessonModel
-      .find()
-      .populate({
-        path: 'module_id',
-        match: { course_id },
-      })
-      .lean();
-
-    const filteredLessons = lessons.filter(
-      (lesson) => lesson.module_id !== null,
-    );
-
-    if (!filteredLessons.length) {
-      throw new NotFoundException('Darslar topilmadi!');
-    }
-
-    return filteredLessons;
-  }
-
   async update(id: string, dto: UpdateCourseDto): Promise<Course> {
     const updated = await this.courseModel.findByIdAndUpdate(id, dto, {
       new: true,

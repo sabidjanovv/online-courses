@@ -23,8 +23,19 @@ export class ModulesService {
 
   async findOne(id: string): Promise<Modules> {
     const module = await this.model.findById(id).populate('course_id').lean();
-    if (!module) throw new NotFoundException('Modul topilmadi');
+    if (!module) throw new NotFoundException('Modull topilmadi');
     return module;
+  }
+
+  async getCourseModules(course_id: string): Promise<Modules[]> {
+    console.log(course_id);
+    
+    const modules = await this.model.find({ course_id });
+    if (!modules.length) {
+      throw new NotFoundException('Modullar topilmadi!');
+    }
+
+    return modules;
   }
 
   async update(id: string, dto: UpdateModuleDto): Promise<Modules> {
