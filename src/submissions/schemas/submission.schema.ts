@@ -17,9 +17,6 @@ export class Submission {
 
   @Prop({ type: String, required: true })
   answer: string;
-
-  @Prop({ type: Number, required: false, default: null })
-  score?: number;
 }
 
 export const SubmissionSchema = SchemaFactory.createForClass(Submission);

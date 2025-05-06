@@ -11,17 +11,4 @@ export class CreateSubmissionDto {
   @ApiProperty({ example: 'Bu mening javobim', description: 'Javob matni' })
   @IsString()
   answer: string;
-
-  @ApiProperty({
-    example: 95,
-    required: false,
-    description: 'Bahosi (0 dan 100 gacha)',
-    minimum: 0,
-    maximum: 100,
-  })
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  @Max(100)
-  score?: number;
 }

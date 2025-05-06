@@ -6,11 +6,13 @@ import {
   Param,
   Patch,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { EnrollmentsService } from './enrollments.service';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
 import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { AdminGuard } from '../common/guards/admin.guard';
 
 @ApiTags('Enrollments')
 @Controller('enrollments')
@@ -18,6 +20,8 @@ export class EnrollmentsController {
   constructor(private readonly service: EnrollmentsService) {}
 
   @Post()
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Yangi yozilish yaratish' })
   @ApiResponse({ status: 201, description: 'Yozilish yaratildi' })
   create(@Body() dto: CreateEnrollmentDto) {
@@ -25,6 +29,8 @@ export class EnrollmentsController {
   }
 
   @Get()
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Barcha yozilishlarni olish' })
   @ApiResponse({ status: 200, description: 'Yozilishlar ro‘yxati' })
   findAll() {
@@ -32,6 +38,8 @@ export class EnrollmentsController {
   }
 
   @Get(':id')
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'ID bo‘yicha yozilishni olish' })
   @ApiResponse({ status: 200, description: 'Bitta yozilish' })
   findOne(@Param('id') id: string) {
@@ -39,6 +47,8 @@ export class EnrollmentsController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Yozilishni tahrirlash' })
   @ApiResponse({ status: 200, description: 'Yozilish yangilandi' })
   update(@Param('id') id: string, @Body() dto: UpdateEnrollmentDto) {
@@ -46,6 +56,8 @@ export class EnrollmentsController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: 'Yozilishni o‘chirish' })
   @ApiResponse({ status: 200, description: 'O‘chirildi' })
   remove(@Param('id') id: string) {
