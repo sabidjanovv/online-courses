@@ -18,7 +18,7 @@ export class User {
   @Prop({ required: true, unique: true })
   email: string;
 
-  @ApiProperty({ example: 'hashed_password' })
+  @ApiProperty({ example: 'password' })
   @Prop({ required: true })
   password: string;
 

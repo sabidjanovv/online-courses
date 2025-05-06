@@ -4,11 +4,13 @@ import { Model } from 'mongoose';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { UpdateSubmissionDto } from './dto/update-submission.dto';
 import { Submission, SubmissionDocument } from './schemas/submission.schema';
+import { Result, ResultDocument } from '../results/schemas/result.schema';
 
 @Injectable()
 export class SubmissionService {
   constructor(
     @InjectModel(Submission.name) private model: Model<SubmissionDocument>,
+    @InjectModel(Result.name) private resultModel: Model<ResultDocument>,
   ) {}
 
   async create(dto: CreateSubmissionDto): Promise<Submission> {
@@ -22,13 +24,15 @@ export class SubmissionService {
       .populate('user_id', '_id name email role');
   }
 
-  async findOne(id: string): Promise<Submission> {
+  async findOne(id: string) {
     const submission = await this.model
       .findById(id)
       .populate('assignment_id')
       .populate('user_id', '_id name email role');
+
+    const result = await this.resultModel.find({ submission_id: id });
     if (!submission) throw new NotFoundException('Topshiruv topilmadi');
-    return submission;
+    return { submission, result };
   }
 
   async update(id: string, dto: UpdateSubmissionDto): Promise<Submission> {

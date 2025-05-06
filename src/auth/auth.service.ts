@@ -17,6 +17,7 @@ import { createApiResponse } from '../common/utils/api-response';
 import { JwtPayload } from 'jsonwebtoken';
 import { SignInDto } from './dto/sign-in.dto';
 import { UserRole } from '../common/enums/enum';
+import { Teacher, TeacherDocument } from '../teachers/schemas/teacher.schema';
 
 @Injectable()
 export class AuthService {
@@ -24,6 +25,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+    @InjectModel(Teacher.name) private readonly teacherModel: Model<TeacherDocument>,
   ) {}
   async signUp(createUserDto: CreateUserDto, role: UserRole) {
     const existinguser = await this.userModel.findOne({
@@ -102,13 +104,22 @@ export class AuthService {
   }
 
   async signIn(signInDto: SignInDto) {
-    const user = await this.userModel.findOne({ email: signInDto.email });
+    let user;
+    let isTeacher = false;
+
+    if (signInDto.email) {
+      user = await this.userModel.findOne({ email: signInDto.email });
+    }
+    else if (signInDto.login) {
+      user = await this.teacherModel.findOne({ login: signInDto.login });
+      isTeacher = true; 
+    }
 
     if (!user) {
       throw new BadRequestException("Foydalanuvchi nomi yoki parol noto'g'ri");
     }
 
-    if (!user.isActive) {
+    if (!isTeacher && !user.isActive) {
       throw new ForbiddenException('Foydalanuvchi faol emas');
     }
 
@@ -125,8 +136,8 @@ export class AuthService {
     return createApiResponse(200, 'Tizimga muvaffaqiyatli kirildi', {
       access_token,
       id: user._id,
-      email: user.email,
-      role: user.role,
+      email: user.email || user.login, 
+      role: user.role || 'teacher', 
     });
   }
 

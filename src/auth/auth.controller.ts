@@ -36,7 +36,7 @@ export class AuthController {
   })
   @ApiResponse({ status: 400, description: 'Noto‘g‘ri so‘rov' })
   signUpSuperAdmin(@Body() createAuthDto: CreateUserDto) {
-    const role = UserRole.SUPERADMIN
+    const role = UserRole.SUPERADMIN;
     return this.authService.signUp(createAuthDto, role);
   }
 
@@ -63,6 +63,19 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Login yoki parol noto‘g‘ri' })
   @HttpCode(HttpStatus.OK)
   async signIn(@Body() signInDto: SignInDto) {
+    return this.authService.signIn(signInDto);
+  }
+
+  @Post('teacher/signin')
+  @ApiOperation({ summary: 'Foydalanuvchini tizimga kirishi' })
+  @ApiBody({ type: SignInDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Foydalanuvchi tizimga muvaffaqiyatli kirdi',
+  })
+  @ApiResponse({ status: 401, description: 'Login yoki parol noto‘g‘ri' })
+  @HttpCode(HttpStatus.OK)
+  async signInTeacher(@Body() signInDto: SignInDto) {
     return this.authService.signIn(signInDto);
   }
 

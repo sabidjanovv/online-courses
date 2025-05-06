@@ -6,19 +6,23 @@ import {
   IsBoolean,
   Min,
   Max,
+  IsString,
 } from 'class-validator';
 
 export class CreateResultDto {
   @ApiProperty({
-    example: '65f99a2c4c6c7eaa264cb129',
-    description: 'Foydalanuvchi ID',
+    example: '65f99a2c4c6c7eaa264cb888',
+    description: 'Topshirish IDsi',
   })
   @IsMongoId()
-  user_id: string;
+  submission_id: string;
 
-  @ApiProperty({ example: '65f99a2c4c6c7eaa264cb888', description: 'Kurs ID' })
+  @ApiProperty({
+    example: '65f99a2c4c6c7eaa264cb888',
+    description: 'Tekshirgan Ustoz IDsi',
+  })
   @IsMongoId()
-  course_id: string;
+  teacher_id: string;
 
   @ApiProperty({ example: 87, description: 'Umumiy baho (0-100)' })
   @IsNumber()
@@ -26,7 +30,11 @@ export class CreateResultDto {
   @Max(100)
   score: number;
 
-  @ApiProperty({ example: true, description: 'Tugatildimi yoki yo‘q' })
-  @IsBoolean()
-  completed: boolean;
+  @ApiProperty({
+    description: 'Ustoz tomonidan tekshiruv',
+    example: 'Topshiriq javobi uchun feedback bering',
+  })
+  @IsString()
+  @IsNotEmpty()
+  feedback: string;
 }

@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
@@ -21,10 +22,13 @@ import {
   ApiBearerAuth,
   ApiParam,
   ApiResponse,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { AdminGuard } from '../common/guards/admin.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { EnrollmentGuard } from '../common/guards/enrollment.guard';
+import { PaginationDto } from '../common/pagination/pagination.dto';
+import { Course } from './schemas/course.schema';
 
 @ApiTags('Courses')
 @Controller('courses')
@@ -43,8 +47,36 @@ export class CoursesController {
   @Get()
   @ApiOperation({ summary: 'Barcha kurslarni olish' })
   @ApiOkResponse({ description: 'Barcha kurslar ro‘yxati' })
-  findAll() {
-    return this.coursesService.findAll();
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Sahifa raqami (default 1)',
+    type: Number,
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Sahifadagi kurslar soni (default 10)',
+    type: Number,
+    example: 10,
+  })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    description: 'Kurs nomi bo‘yicha qidiruv',
+    type: String,
+    example: 'JavaScript',
+  })
+  @ApiQuery({
+    name: 'category_id',
+    required: false,
+    description: 'Kurs kategoriya ID si bo‘yicha filtrlash',
+    type: String,
+    example: '631b9d515db4b0f30c543e67',
+  })
+  async findAll(@Query() paginationDto: PaginationDto): Promise<Course[]> {
+    return this.coursesService.findAll(paginationDto);
   }
 
   @Get(':id')

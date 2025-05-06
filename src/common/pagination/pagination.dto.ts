@@ -37,4 +37,12 @@ export class PaginationDto {
 
   @IsOptional()
   is_active?: boolean;
+
+  @IsOptional()
+  @IsString()
+  search?: string;
+
+  @IsOptional()
+  @IsString()
+  category_id?: string;
 }

@@ -6,6 +6,7 @@ import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { Lesson } from '../lessons/schemas/lesson.schema';
 import { Modules } from '../modules/schemas/module.schema';
+import { PaginationDto } from '../common/pagination/pagination.dto';
 
 @Injectable()
 export class CoursesService {
@@ -22,13 +23,36 @@ export class CoursesService {
     return await course.save();
   }
 
-  async findAll(): Promise<Course[]> {
-    return this.courseModel
-      .find()
+  async findAll(paginationDto: PaginationDto): Promise<Course[]> {
+    const { page, limit, search, category_id } = paginationDto;
+    const filter: any = {};
+
+    // Kategoriyaga bo‘yicha filtrlash
+    if (category_id) {
+      filter.category_id = category_id;
+    }
+
+    // Kurs nomiga bo‘yicha qidirish
+    if (search) {
+      filter.name = { $regex: search, $options: 'i' }; // case-insensitive qidiruv
+    }
+
+    // Sahifalash (skip va limit)
+    const skip = (page - 1) * limit;
+    const courses = await this.courseModel
+      .find(filter)
       .populate('category_id', 'name')
       .populate('teacher_id', 'name')
-      .sort({ createdAt: 'desc' })
+      .skip(skip) // Skip to the appropriate page
+      .limit(limit) // Limit the number of results
+      .sort({ createdAt: -1 }) // So‘rovni yaratish sanasiga qarab kamaytirish
       .lean();
+
+    if (!courses.length) {
+      throw new NotFoundException('Kurslar topilmadi');
+    }
+
+    return courses;
   }
 
   async findOne(id: string): Promise<Course> {
