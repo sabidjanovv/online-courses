@@ -40,7 +40,7 @@ export class LessonsController {
   @Get('course/:courseId')
   @ApiBearerAuth()
   @UseGuards(EnrollmentGuard)
-  @ApiOperation({ summary: 'Kursdagi barcha darslar ro‘yxatini olish' })
+  @ApiOperation({ summary: 'Oquvchi kursdagi barcha darslar ro‘yxatini olish' })
   @ApiParam({ name: 'courseId', type: 'string', description: 'Kurs ID' })
   @ApiResponse({ status: 200, description: 'Darslar muvaffaqiyatli topildi.' })
   @ApiResponse({ status: 404, description: 'Darslar topilmadi.' })
