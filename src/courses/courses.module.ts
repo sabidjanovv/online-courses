@@ -18,5 +18,6 @@ import { ModuleSchema, Modules } from '../modules/schemas/module.schema';
   ],
   controllers: [CoursesController],
   providers: [CoursesService],
+  exports:[CoursesService]
 })
 export class CoursesModule {}

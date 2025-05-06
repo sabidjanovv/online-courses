@@ -11,7 +11,14 @@ import {
 import { ModulesService } from './modules.service';
 import { CreateModuleDto } from './dto/create-module.dto';
 import { UpdateModuleDto } from './dto/update-module.dto';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiParam,
+  ApiResponse,
+} from '@nestjs/swagger';
+import { EnrollmentGuard } from '../common/guards/enrollment.guard';
 
 @ApiTags('Modules')
 @Controller('modules')
@@ -36,6 +43,18 @@ export class ModulesController {
   @ApiOperation({ summary: 'Modulni ID orqali olish' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
+  }
+
+  @Get('course/:courseId')
+  @ApiBearerAuth()
+  @UseGuards(EnrollmentGuard)
+  @ApiOperation({ summary: 'Kursga tegishli modullar ro‘yxatini olish' })
+  @ApiParam({ name: 'courseId', type: 'string', description: 'Kurs ID' })
+  @ApiResponse({ status: 200, description: 'Modullar muvaffaqiyatli topildi.' })
+  @ApiResponse({ status: 404, description: 'Modullar topilmadi.' })
+  @ApiResponse({ status: 403, description: 'Foydalanuvchi kursga yozilmagan.' })
+  async getModules(@Param('courseId') courseId: string) {
+    return this.service.getCourseModules(courseId);
   }
 
   @Patch(':id')
