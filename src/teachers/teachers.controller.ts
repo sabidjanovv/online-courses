@@ -29,12 +29,16 @@ export class TeachersController {
   }
 
   @Get()
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: "Barcha o'qituvchilarni ko'rish" })
   findAll() {
     return this.teachersService.findAll();
   }
 
   @Get(':id')
+  @ApiBearerAuth()
+  @UseGuards(AdminGuard)
   @ApiOperation({ summary: "Bitta o'qituvchini olish" })
   findOne(@Param('id') id: string) {
     return this.teachersService.findOne(id);

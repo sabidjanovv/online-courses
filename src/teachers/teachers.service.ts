@@ -23,11 +23,18 @@ export class TeachersService {
   }
 
   async findAll(): Promise<Teacher[]> {
-    return this.teacherModel.find().sort({ createdAt: -1 }).lean();
+    return this.teacherModel
+      .find()
+      .select('-password -hashed_refresh_token')
+      .sort({ createdAt: -1 })
+      .lean();
   }
 
   async findOne(id: string): Promise<Teacher> {
-    const teacher = await this.teacherModel.findById(id).lean();
+    const teacher = await this.teacherModel
+      .findById(id)
+      .select('-password -hashed_refresh_token')
+      .lean();
     if (!teacher) {
       throw new NotFoundException(`ID: ${id} bo'yicha o‘qituvchi topilmadi`);
     }

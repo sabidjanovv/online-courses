@@ -56,13 +56,11 @@ export class EnrollmentGuard implements CanActivate {
       throw new ForbiddenException('Foydalanuvchi faol emas!');
     }
 
-    // Kurs ID sini so‘rovdan olish (buni URL parametri yoki query orqali uzatishingiz mumkin)
-    const { courseId } = req.params; // Kurs ID parametri sifatida uzatiladi deb faraz qilamiz
+    const { courseId } = req.params; 
     if (!courseId) {
       throw new BadRequestException('Kurs ID si kerak');
     }
 
-    // Foydalanuvchi kursga yozilganligini tekshirish
     const isEnrolled = await this.enrollmentsService.isEnrolled(
       payload.id,
       courseId,
