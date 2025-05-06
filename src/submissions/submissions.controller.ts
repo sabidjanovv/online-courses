@@ -6,11 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { UpdateSubmissionDto } from './dto/update-submission.dto';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { SubmissionService } from './submissions.service';
+import { SubmissionGuard } from '../common/guards/submission.guard';
 
 @ApiTags('Submissions')
 @Controller('submissions')
@@ -18,6 +20,8 @@ export class SubmissionController {
   constructor(private readonly service: SubmissionService) {}
 
   @Post()
+  @ApiBearerAuth()
+  @UseGuards(SubmissionGuard)
   @ApiOperation({ summary: 'Yangi topshiruv qo‘shish' })
   create(@Body() dto: CreateSubmissionDto) {
     return this.service.create(dto);

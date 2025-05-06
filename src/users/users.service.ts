@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -10,6 +11,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { hash } from 'argon2';
 import { Response } from 'express';
+import { PaginationDto } from '../common/pagination/pagination.dto';
+import { UserRole } from '../common/enums/enum';
 
 @Injectable()
 export class UsersService {
@@ -31,21 +34,72 @@ export class UsersService {
     return createdUser.save();
   }
 
-  async findAll(): Promise<User[]> {
-    return await this.userModel
-      .find()
+  async findAll(paginationDto: PaginationDto, user: any): Promise<User[]> {
+    const { page = 1, limit = 10, role } = paginationDto;
+    const skip = (page - 1) * limit;
+
+    const filter: Record<string, any> = {};
+    console.log(user.role);
+
+    if (user.role === 'admin') {
+      filter.role = 'student';
+    }
+
+    if (user.role === 'superadmin' && role) {
+      filter.role = role;
+    }
+
+    return this.userModel
+      .find(filter)
       .select('-password')
-      .sort({ createdAt: 'desc' })
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 })
       .lean();
   }
 
-  async findOne(id: string): Promise<User> {
+  async findOne(id: string, currentUser: any): Promise<User> {
     const user = await this.userModel.findById(id).select('-password').lean();
+
     if (!user) throw new NotFoundException('Foydalanuvchi topilmadi');
+
+    const isSameUser = user._id.toString() === currentUser.id;
+
+    if (
+      currentUser.role === 'admin' &&
+      (user.role === 'admin' || user.role === 'superadmin') &&
+      !isSameUser
+    ) {
+      throw new ForbiddenException(
+        'Bu foydalanuvchini ko‘rishga ruxsatingiz yo‘q',
+      );
+    }
+
     return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    currentUser: any,
+  ): Promise<User> {
+    const user = await this.userModel.findById(id).lean();
+
+    if (!user) throw new NotFoundException('Foydalanuvchi topilmadi');
+
+    const isSameUser = user._id.toString() === currentUser.id;
+
+    // Admin boshqa admin yoki superadminni yangilay olmasin (faqat o‘zini)
+    if (
+      currentUser.role === 'admin' &&
+      (user.role === 'admin' || user.role === 'superadmin') &&
+      !isSameUser
+    ) {
+      throw new ForbiddenException(
+        'Bu foydalanuvchini yangilashga ruxsatingiz yo‘q',
+      );
+    }
+
     const updateData = { ...updateUserDto };
 
     if (updateUserDto.password) {
@@ -57,14 +111,30 @@ export class UsersService {
       .select('-password')
       .lean();
 
-    if (!updated) throw new NotFoundException('Foydalanuvchi topilmadi');
+    if (!updated) throw new NotFoundException('Yangilashda xatolik yuz berdi');
 
     return updated;
   }
 
-  async remove(id: string): Promise<{ message: string }> {
-    const deleted = await this.userModel.findByIdAndDelete(id).lean();
-    if (!deleted) throw new NotFoundException('Foydalanuvchi topilmadi');
+  async remove(id: string, currentUser: any): Promise<{ message: string }> {
+    const user = await this.userModel.findById(id).lean();
+
+    if (!user) throw new NotFoundException('Foydalanuvchi topilmadi');
+
+    const isSameUser = user._id.toString() === currentUser.id;
+
+    if (
+      currentUser.role === 'admin' &&
+      (user.role === 'admin' || user.role === 'superadmin') &&
+      !isSameUser
+    ) {
+      throw new ForbiddenException(
+        'Bu foydalanuvchini o‘chirishga ruxsatingiz yo‘q',
+      );
+    }
+
+    await this.userModel.findByIdAndDelete(id);
+
     return { message: 'Foydalanuvchi o‘chirildi' };
   }
 
