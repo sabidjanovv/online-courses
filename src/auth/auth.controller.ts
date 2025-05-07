@@ -66,18 +66,18 @@ export class AuthController {
     return this.authService.signIn(signInDto);
   }
 
-  @Post('teacher/signin')
-  @ApiOperation({ summary: 'Foydalanuvchini tizimga kirishi' })
-  @ApiBody({ type: SignInDto })
-  @ApiResponse({
-    status: 200,
-    description: 'Foydalanuvchi tizimga muvaffaqiyatli kirdi',
-  })
-  @ApiResponse({ status: 401, description: 'Login yoki parol noto‘g‘ri' })
-  @HttpCode(HttpStatus.OK)
-  async signInTeacher(@Body() signInDto: SignInDto) {
-    return this.authService.signIn(signInDto);
-  }
+  // @Post('teacher/signin')
+  // @ApiOperation({ summary: 'Foydalanuvchini tizimga kirishi' })
+  // @ApiBody({ type: SignInDto })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Foydalanuvchi tizimga muvaffaqiyatli kirdi',
+  // })
+  // @ApiResponse({ status: 401, description: 'Login yoki parol noto‘g‘ri' })
+  // @HttpCode(HttpStatus.OK)
+  // async signInTeacher(@Body() signInDto: SignInDto) {
+  //   return this.authService.signIn(signInDto);
+  // }
 
   @Post('signout/:id')
   @ApiOperation({ summary: 'Foydalanuvchini tizimdan chiqishi' })
