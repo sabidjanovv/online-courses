@@ -3,14 +3,18 @@ import { AssignmentService } from './assignments.service';
 import { AssignmentController } from './assignments.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Assignment, AssignmentSchema } from './schemas/assignment.schema';
-// import { ModuleSchema, Modules } from '../modules/schemas/module.schema';
+import { CoursesModule } from '../courses/courses.module';
+import { TeachersModule } from '../teachers/teachers.module';
+import { ModulesModule } from '../modules/modules.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Assignment.name, schema: AssignmentSchema },
-      // { name: Modules.name, schema: ModuleSchema },
     ]),
+    CoursesModule,
+    TeachersModule,
+    ModulesModule,
   ],
   controllers: [AssignmentController],
   providers: [AssignmentService],
