@@ -7,13 +7,15 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ModulesService } from '../../modules/modules.service';
 import { EnrollmentsService } from '../../enrollments/enrollments.service';
 
 @Injectable()
-export class EnrollmentGuard implements CanActivate {
+export class ModuleLessonsGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly enrollmentsService: EnrollmentsService, 
+    private readonly modulesService: ModulesService,
+    private readonly enrollmentsService: EnrollmentsService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -54,17 +56,19 @@ export class EnrollmentGuard implements CanActivate {
       throw new ForbiddenException('Foydalanuvchi faol emas!');
     }
 
-    const { courseId } = req.params; 
-    if (!courseId) {
+    const { moduleId } = req.params;
+    if (!moduleId) {
       throw new BadRequestException('Kurs ID si kerak');
     }
+
+    const module = await this.modulesService.findOne(moduleId);
+    const courseId = module.course_id._id.toString();
 
     const isEnrolled = await this.enrollmentsService.isEnrolled(
       payload.id,
       courseId,
     );
-    // console.log(isEnrolled, payload.id, courseId);
-    
+
     if (!isEnrolled) {
       throw new ForbiddenException('Foydalanuvchi bu kursga yozilmagan');
     }

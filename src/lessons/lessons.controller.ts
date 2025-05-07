@@ -15,6 +15,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth, ApiParam, ApiResponse } from '@ne
 import { EnrollmentGuard } from '../common/guards/enrollment.guard';
 import { LessonCreateUpdateGuard } from '../common/guards/lessons-create.guard';
 import { AdminGuard } from '../common/guards/admin.guard';
+import { ModuleLessonsGuard } from '../common/guards/module-lessons.guard';
 
 @ApiTags('Lessons')
 @Controller('lessons')
@@ -45,16 +46,17 @@ export class LessonsController {
     return this.service.findOne(id);
   }
 
-  @Get('course/:courseId')
+  @Get('module/:moduleId')
   @ApiBearerAuth()
-  @UseGuards(EnrollmentGuard)
-  @ApiOperation({ summary: 'Oquvchi kursdagi barcha darslar ro‘yxatini olish' })
-  @ApiParam({ name: 'courseId', type: 'string', description: 'Kurs ID' })
+  @UseGuards(ModuleLessonsGuard)
+  @ApiOperation({
+    summary: 'Oquvchi moduledagu barcha darslar ro‘yxatini olish',
+  })
+  @ApiParam({ name: 'moduleId', type: 'string', description: 'module ID' })
   @ApiResponse({ status: 200, description: 'Darslar muvaffaqiyatli topildi.' })
   @ApiResponse({ status: 404, description: 'Darslar topilmadi.' })
-  @ApiResponse({ status: 403, description: 'Foydalanuvchi kursga yozilmagan.' })
-  async getLessons(@Param('courseId') courseId: string) {
-    return this.service.getCourseLessons(courseId);
+  async getLessons(@Param('moduleId') moduleId: string) {
+    return this.service.getModuleLessons(moduleId);
   }
 
   @Patch(':id')

@@ -32,24 +32,16 @@ export class LessonsService {
     return lesson;
   }
 
-  async getCourseLessons(course_id: string): Promise<Lesson[]> {
+  async getModuleLessons(module_id: string): Promise<Lesson[]> {
     const lessons = await this.lessonModel
-      .find()
-      .populate({
-        path: 'module_id',
-        match: { course_id },
-      })
+      .find({ module_id })
+      .sort({ createdAt: 'desc' })
       .lean();
 
-    const filteredLessons = lessons.filter(
-      (lesson) => lesson.module_id !== null,
-    );
-
-    if (!filteredLessons.length) {
-      throw new NotFoundException('Darslar topilmadi!');
+    if (!lessons.length) {
+      throw new NotFoundException("Ma'lumot topilmadi");
     }
-
-    return filteredLessons;
+    return lessons;
   }
 
   async update(id: string, dto: UpdateLessonDto): Promise<Lesson> {
