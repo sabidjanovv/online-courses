@@ -18,5 +18,6 @@ import { ModulesModule } from '../modules/modules.module';
   ],
   controllers: [AssignmentController],
   providers: [AssignmentService],
+  exports: [AssignmentService],
 })
 export class AssignmentsModule {}

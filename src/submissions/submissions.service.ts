@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
@@ -14,7 +18,20 @@ export class SubmissionService {
   ) {}
 
   async create(dto: CreateSubmissionDto): Promise<Submission> {
-    return await this.model.create(dto);
+    const existing = await this.model.findOne({
+      user_id: dto.user_id,
+      assignment_id: dto.assignment_id,
+    });
+
+    if (existing) {
+      throw new BadRequestException(
+        'Bu assignment uchun siz allaqachon submission qilgansiz',
+      );
+    }
+
+    const submission = await this.model.create(dto);
+
+    return submission;
   }
 
   async findAll(): Promise<Submission[]> {
