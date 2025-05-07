@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  mongodb17:
+    container_name: mongodb17
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo-data:/data/db
+
+  app:
+    container_name: online_courses
+    image: sabidjanovv/online_courses
+    build:
+      context: ./
+    depends_on:
+      - mongodb17
+    restart: unless-stopped
+    ports:
+      - "3033:3033"
+      - "3034:3034"
+    environment:
+      - PORT=3033
+      - MONGO_URI=mongodb://mongodb17:27017/online_courses
+    env_file:
+      - .env
